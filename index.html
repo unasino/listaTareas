@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsabilidades</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333333;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+      padding: 20px;
+      background-color: #f9fafc;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .add-task-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #4caf50;
+      color: white;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .add-task-btn:hover {
+      background-color: #45a049;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    form input, form button {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    form button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #45a049;
+    }
+
+    .delete-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #cc0000;
+    }
+
+    .red-text {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mis tareas</h1>
+    <button class="add-task-btn" id="open-modal-btn">Agregar Tarea</button>
+    <ul id="task-list"></ul>
+    
+  </div>
+
+  <div id="taskModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal-btn">&times;</span>
+      <form id="task-form">
+        <input type="text" id="tarea" placeholder="Tarea" required>
+        <input type="datetime-local" id="fechaFin" required>
+        <button type="submit">Agregar Tarea</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const endpoint = 'https://sheetdb.io/api/v1/cvus3asp78cpg'; // Tu endpoint de SheetDB.io
+      const taskForm = document.getElementById('task-form');
+      const taskList = document.getElementById('task-list');
+      const modal = document.getElementById('taskModal');
+      const openModalBtn = document.getElementById('open-modal-btn');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+
+      // Función para abrir el modal
+      openModalBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+      });
+
+      // Función para cerrar el modal
+      closeModalBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+
+      // Función para cerrar el modal cuando se hace clic fuera de él
+      window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      // Función para obtener el último ID y generar el siguiente
+      function getNextId(tasks) {
+        if (tasks.length === 0) {
+          return 1; // Si no hay tareas, empezar desde 1
+        } else {
+          const lastId = tasks[tasks.length - 1].id;
+          return parseInt(lastId) + 1; // Incrementar el último ID
+        }
+      }
+
+      // Función para calcular los días restantes hasta la fecha de vencimiento
+      function calcularDiasRestantes(fechaFin) {
+        const hoy = new Date();
+        const fechaFinDate = new Date(fechaFin);
+        const diferencia = fechaFinDate - hoy;
+        const diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+
+        return diasRestantes;
+      }
+
+      // Función para cargar tareas existentes al cargar la página
+      function loadTasks() {
+        fetch(endpoint)
+          .then(response => response.json())
+          .then(data => {
+            // Calcular los días restantes para cada tarea y ordenarlas
+            data.forEach(task => {
+              task.diasRestantes = calcularDiasRestantes(task.fecha_fin);
+            });
+
+            data.sort((a, b) => a.diasRestantes - b.diasRestantes);
+
+            // Limpiar la lista antes de actualizar
+            taskList.innerHTML = '';
+
+            // Iterar sobre los datos ordenados y crear elementos li para cada tarea
+            data.forEach(task => {
+              const listItem = document.createElement('li');
+              const diasRestantesText = task.diasRestantes > 1 ? `Faltan ${task.diasRestantes} días` : task.diasRestantes === 1 ? 'Vence mañana' : 'Vencida';
+              const redTextClass = task.diasRestantes < 5 ? 'red-text' : '';
+              listItem.innerHTML = `
+                <span><strong>${task.tarea}</strong><br>${task.fecha_fin}</span>
+                <span class="${redTextClass}">${diasRestantesText}</span>
+                <button class="delete-btn" data-id="${task.id}">Eliminar</button>
+              `;
+              taskList.appendChild(listItem);
+
+              // Agregar evento de click para el botón de eliminar
+              const deleteBtn = listItem.querySelector('.delete-btn');
+              deleteBtn.addEventListener('click', function() {
+                deleteTask(task.id);
+              });
+            });
+          })
+          .catch(error => console.error('Error al cargar tareas:', error));
+      }
+
+      // Función para eliminar una tarea por ID
+      function deleteTask(taskId) {
+        const deleteEndpoint = `${endpoint}/id/${taskId}`;
+        
+        fetch(deleteEndpoint, {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Tarea eliminada:', data);
+
+          // Volver a cargar la lista de tareas después de eliminar
+          loadTasks();
+        })
+        .catch(error => console.error('Error al eliminar tarea:', error));
+      }
+
+      // Cargar tareas al cargar la página por primera vez
+      loadTasks();
+
+      // Función para manejar el envío del formulario
+      taskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Obtener valores del formulario
+        const tarea = document.getElementById('tarea').value;
+        const fechaFin = document.getElementById('fechaFin').value;
+
+        // Crear objeto con datos de la tarea
+        const newTask = {
+          id: '', // El ID se asignará automáticamente después
+          tarea: tarea,
+          fecha_fin: fechaFin
+        };
+
+        // Obtener lista actual de tareas para generar el nuevo ID
+        fetch(endpoint)
+          .then(response => response.json())
+          .then(data => {
+            const nextId = getNextId(data); // Obtener el siguiente ID
+            newTask.id = nextId.toString(); // Asignar el ID al nuevo registro
+
+            // Enviar datos a SheetDB.io usando fetch con método POST
+            fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(newTask)
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Tarea agregada:', data);
+
+              // Limpiar formulario después de agregar tarea
+              taskForm.reset();
+              modal.style.display = 'none';
+
+              // Actualizar lista de tareas mostrando la nueva tarea
+              loadTasks();
+            })
+            .catch(error => console.error('Error al agregar tarea:', error));
+          })
+          .catch(error => console.error('Error al obtener tareas:', error));
+      });
+    });
+  </script>
+</body>
+</html>

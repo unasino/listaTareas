@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Tareas con Imágenes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     /* Variables CSS para colores y tamaños */
     :root {
@@ -20,8 +22,8 @@
       --hover-bg: #eef2f7;
       --border-radius: 8px;
       --transition-duration: 0.3s;
-      --max-width: 800px;
-      --modal-max-width: 500px;
+      --max-width: 900px;
+      --modal-max-width: 600px;
       --spinner-color: #4caf50;
     }
 
@@ -32,22 +34,64 @@
       margin: 0;
       padding: 0;
       color: var(--text-color);
+      line-height: 1.6;
     }
 
     .container {
       max-width: var(--max-width);
       margin: 40px auto;
       background-color: var(--container-bg);
-      padding: 30px 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       text-align: center;
-      color: var(--text-color);
+      color: var(--primary-color);
       margin-bottom: 30px;
-      font-size: 2rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      position: relative;
+    }
+
+    h1 i {
+      margin-right: 10px;
+    }
+
+    /* Botones */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color var(--transition-duration) ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .btn i {
+      margin-right: 8px;
     }
 
     /* Lista de tareas */
@@ -59,51 +103,32 @@
 
     li {
       margin-bottom: 15px;
-      padding: 15px 20px;
+      padding: 20px;
       background-color: var(--light-bg);
       border-radius: var(--border-radius);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      transition: background-color var(--transition-duration) ease;
+      transition: background-color var(--transition-duration) ease, transform var(--transition-duration) ease;
+      position: relative;
     }
 
     li:hover {
       background-color: var(--hover-bg);
+      transform: translateY(-2px);
     }
 
-    /* Botones */
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
+    /* Estado de la tarea */
+    .status-text {
+      font-weight: bold;
       font-size: 14px;
-      transition: background-color var(--transition-duration) ease;
-      display: inline-block;
-      text-align: center;
-      text-decoration: none;
+      color: var(--text-color);
     }
 
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn-danger {
-      background-color: var(--danger-color);
-      color: white;
-      padding: 6px 12px;
-    }
-
-    .btn-danger:hover {
-      background-color: var(--danger-hover);
+    .status-danger {
+      color: var(--danger-color);
     }
 
     /* Modal */
@@ -124,11 +149,11 @@
     .modal-content {
       background-color: var(--container-bg);
       margin: auto;
-      padding: 30px 20px;
+      padding: 30px 25px;
       border-radius: var(--border-radius);
       width: 90%;
       max-width: var(--modal-max-width);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       position: relative;
       animation: fadeIn 0.3s ease;
     }
@@ -154,17 +179,18 @@
     }
 
     /* Formulario */
-    form input, form button {
+    form input, form button, form select {
       margin-bottom: 15px;
-      padding: 12px;
+      padding: 12px 15px;
       border: 1px solid #ccc;
       border-radius: var(--border-radius);
       font-size: 16px;
       width: 100%;
       box-sizing: border-box;
+      transition: border-color var(--transition-duration) ease, box-shadow var(--transition-duration) ease;
     }
 
-    form input:focus, form button:focus {
+    form input:focus, form button:focus, form select:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
@@ -174,51 +200,10 @@
       background-color: var(--primary-color);
       color: white;
       cursor: pointer;
-      transition: background-color var(--transition-duration) ease;
     }
 
     form button:hover {
       background-color: var(--primary-hover);
-    }
-
-    /* Estado de la tarea */
-    .status-text {
-      font-weight: bold;
-      font-size: 14px;
-      color: var(--text-color);
-    }
-
-    .status-danger {
-      color: var(--danger-color);
-    }
-
-    /* Animación de carga */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .loading-spinner {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid var(--spinner-color);
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loading p {
-      color: var(--spinner-color);
-      font-weight: bold;
-      margin-top: 10px;
-      font-size: 18px;
     }
 
     /* Imagen en detalles */
@@ -227,6 +212,7 @@
       margin-top: 15px;
       border-radius: var(--border-radius);
       display: none;
+      transition: opacity var(--transition-duration) ease;
     }
 
     /* Mensaje de error para la imagen */
@@ -238,19 +224,79 @@
       text-align: center;
     }
 
+    /* Animación de carga */
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid var(--spinner-color);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Alertas */
+    .alert {
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .alert-success {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+
+    .alert-error {
+      background-color: var(--danger-color);
+      color: #fff;
+    }
+
+    .alert i {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
     /* Responsividad */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .container {
-        padding: 20px 15px;
+        padding: 30px 20px;
       }
 
       .modal-content {
-        padding: 20px 15px;
+        padding: 25px 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 25px;
       }
 
       .btn {
-        padding: 8px 10px;
-        font-size: 12px;
+        font-size: 14px;
+        padding: 8px 16px;
       }
 
       .close {
@@ -259,21 +305,44 @@
         right: 15px;
       }
 
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
+      li {
+        flex-direction: column;
+        align-items: flex-start;
       }
+
+      .status-text {
+        margin-top: 5px;
+      }
+    }
+
+    /* Placeholder para imágenes */
+    .placeholder {
+      background-color: #ccc;
+      width: 100%;
+      height: 150px;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Mis Tareas</h1>
-    <button class="btn btn-primary" id="open-modal-btn" aria-haspopup="dialog">Agregar Tarea</button>
+    <h1><i class="fas fa-tasks"></i> Gestión de Tareas</h1>
+    <button class="btn btn-primary" id="open-modal-btn" aria-haspopup="dialog"><i class="fas fa-plus"></i> Agregar Tarea</button>
+    
+    <!-- Loading Spinner -->
     <div class="loading" id="loading" aria-live="polite">
-      <div class="loading-spinner" aria-hidden="true"></div>
-      <p>Cargando...</p>
+      <div class="spinner" aria-hidden="true"></div>
     </div>
+
+    <!-- Alert Container -->
+    <div id="alert-container"></div>
+
+    <!-- Lista de tareas -->
     <ul id="task-list"></ul>
   </div>
 
@@ -281,13 +350,15 @@
   <div id="taskModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="addTaskTitle">
     <div class="modal-content">
       <span class="close" id="close-modal-btn" aria-label="Cerrar">&times;</span>
-      <h2 id="addTaskTitle">Agregar Nueva Tarea</h2>
+      <h2 id="addTaskTitle"><i class="fas fa-plus-circle"></i> Agregar Nueva Tarea</h2>
       <form id="task-form">
         <input type="text" id="tarea" name="tarea" placeholder="Título de la tarea" required aria-required="true">
         <input type="datetime-local" id="fechaFin" name="fechaFin" required aria-required="true">
         <!-- Campo para subir imagen -->
-        <input type="file" id="imagenFile" name="imagenFile" accept="image/*" aria-label="Subir imagen">
-        <button type="submit">Agregar Tarea</button>
+        <label for="imagenFile" class="btn btn-primary"><i class="fas fa-image"></i> Subir Imagen</label>
+        <input type="file" id="imagenFile" name="imagenFile" accept="image/*" aria-label="Subir imagen" style="display: none;">
+        <p id="image-error">No se pudo cargar la imagen.</p>
+        <button type="submit"><i class="fas fa-check"></i> Agregar Tarea</button>
       </form>
     </div>
   </div>
@@ -302,13 +373,16 @@
       <!-- Imagen de la tarea -->
       <img id="detail-image" src="" alt="Imagen de la tarea">
       <!-- Mensaje de error para la imagen -->
-      <p id="image-error">No se pudo cargar la imagen.</p>
+      <p id="image-error-detail">No se pudo cargar la imagen.</p>
     </div>
   </div>
-  <iframe src="https://calendar.google.com/calendar/embed?height=300&wkst=2&ctz=America%2FLima&bgcolor=%23ffffff&mode=AGENDA&title=jefferson&showPrint=0&showTitle=0&showTabs=0&src=amVmZmVyc29uLm1lbnZlQGdtYWlsLmNvbQ&src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4ucGUjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039BE5&color=%2300cc3d&color=%230B8043" style="border:solid 1px #777" width="950" height="500" frameborder="0" scrolling="no"></iframe>
+
+  <!-- Calendario de Google -->
+  <iframe src="https://calendar.google.com/calendar/embed?height=300&wkst=2&ctz=America%2FLima&bgcolor=%23ffffff&mode=AGENDA&title=jefferson&showPrint=0&showTitle=0&showTabs=0&src=amVmZmVyc29uLm1lbnZlQGdtYWlsLmNvbQ&src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4ucGUjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039BE5&color=%2300cc3d&color=%230B8043" style="border:solid 1px #777" width="100%" height="500" frameborder="0" scrolling="no"></iframe>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const endpoint = 'https://sheetdb.io/api/v1/be3etg7krukfn';
+      const endpoint = 'https://sheetdb.io/api/v1/4psdh9nqqt3gd'; // Reemplaza con tu endpoint de SheetDB
       const imgbbApiKey = '372dd6dc556299357a3f928d1c8b053f'; // Reemplaza con tu API Key de ImgBB
 
       const taskForm = document.getElementById('task-form');
@@ -317,6 +391,7 @@
       const openModalBtn = document.getElementById('open-modal-btn');
       const closeModalBtn = document.getElementById('close-modal-btn');
       const loading = document.getElementById('loading');
+      const alertContainer = document.getElementById('alert-container');
 
       const detailModal = document.getElementById('taskDetailModal');
       const closeDetailModalBtn = document.getElementById('close-detail-modal-btn');
@@ -324,7 +399,7 @@
       const detailDate = document.getElementById('detail-date');
       const detailStatus = document.getElementById('detail-status');
       const detailImage = document.getElementById('detail-image');
-      const imageError = document.getElementById('image-error');
+      const imageErrorDetail = document.getElementById('image-error-detail');
 
       let tasks = [];
 
@@ -338,11 +413,22 @@
       };
 
       const toggleLoading = (show) => {
-        loading.style.display = show ? 'block' : 'none';
+        loading.style.display = show ? 'flex' : 'none';
       };
 
       const disableButtons = (disabled) => {
         document.querySelectorAll('button').forEach(btn => btn.disabled = disabled);
+      };
+
+      const showAlert = (message, type) => {
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        alertContainer.innerHTML = `
+          <div class="alert alert-${type}">
+            <i class="fas ${icon}"></i>
+            ${message}
+          </div>
+        `;
+        setTimeout(() => alertContainer.innerHTML = '', 5000);
       };
 
       // Calcula los días restantes hasta la fecha de fin
@@ -350,6 +436,49 @@
         const hoy = new Date().setHours(0, 0, 0, 0);
         const fechaFinDate = new Date(fechaFin).setHours(0, 0, 0, 0);
         return Math.ceil((fechaFinDate - hoy) / (1000 * 60 * 60 * 24));
+      };
+
+      // Optimiza la carga de tareas utilizando Document Fragment
+      const renderTasks = (tasks) => {
+        taskList.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+
+        tasks.sort((a, b) => calcularDiasRestantes(a.fecha_fin) - calcularDiasRestantes(b.fecha_fin));
+
+        tasks.forEach(task => {
+          const diasRestantes = calcularDiasRestantes(task.fecha_fin);
+          let statusText = '';
+
+          if (diasRestantes > 1) {
+            statusText = `Faltan ${diasRestantes} días`;
+          } else if (diasRestantes === 1) {
+            statusText = 'Vence mañana';
+          } else if (diasRestantes === 0) {
+            statusText = 'Vence hoy';
+          } else {
+            statusText = 'Vencida';
+          }
+
+          const li = document.createElement('li');
+          li.setAttribute('data-id', task.id);
+          li.setAttribute('tabindex', '0'); // Hacer el li enfocables
+          li.setAttribute('role', 'button'); // Mejorar la accesibilidad
+          li.innerHTML = `
+            <div>
+              <strong>${task.tarea}</strong><br>
+              <small>${new Date(task.fecha_fin).toLocaleString()}</small>
+            </div>
+            <div>
+              <span class="status-text ${diasRestantes < 5 ? 'status-danger' : ''}">${statusText}</span><br>
+              <button class="btn btn-danger delete-btn" data-id="${task.id}" aria-label="Eliminar tarea">
+                <i class="fas fa-trash-alt"></i> Eliminar
+              </button>
+            </div>
+          `;
+          fragment.appendChild(li);
+        });
+
+        taskList.appendChild(fragment);
       };
 
       // Carga las tareas desde el endpoint
@@ -360,43 +489,10 @@
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           tasks = await response.json();
-          taskList.innerHTML = '';
-          tasks.sort((a, b) => calcularDiasRestantes(a.fecha_fin) - calcularDiasRestantes(b.fecha_fin));
-
-          tasks.forEach(task => {
-            const diasRestantes = calcularDiasRestantes(task.fecha_fin);
-            let statusText = '';
-
-            if (diasRestantes > 1) {
-              statusText = `Faltan ${diasRestantes} días`;
-            } else if (diasRestantes === 1) {
-              statusText = 'Vence mañana';
-            } else if (diasRestantes === 0) {
-              statusText = 'Vence hoy';
-            } else {
-              statusText = 'Vencida';
-            }
-
-            const li = document.createElement('li');
-            li.setAttribute('data-id', task.id);
-            li.setAttribute('tabindex', '0'); // Hacer el li enfocables
-            li.setAttribute('role', 'button'); // Mejorar la accesibilidad
-            li.innerHTML = `
-              <div>
-                <strong>${task.tarea}</strong><br>
-                <small>${new Date(task.fecha_fin).toLocaleString()}</small>
-              </div>
-              <div>
-                <span class="status-text ${diasRestantes < 5 ? 'status-danger' : ''}">${statusText}</span><br>
-                <button class="btn btn-danger delete-btn" data-id="${task.id}" aria-label="Eliminar tarea">X</button>
-              </div>
-            `;
-            taskList.appendChild(li);
-          });
-
+          renderTasks(tasks);
         } catch (error) {
           console.error('Error al cargar las tareas:', error);
-          alert('Hubo un error al cargar las tareas. Por favor, intenta de nuevo.');
+          showAlert('Hubo un error al cargar las tareas. Por favor, intenta de nuevo.', 'error');
         } finally {
           toggleLoading(false);
           disableButtons(false);
@@ -411,10 +507,11 @@
           disableButtons(true);
           const deleteResponse = await fetch(`${endpoint}/id/${taskId}`, { method: 'DELETE' });
           if (!deleteResponse.ok) throw new Error(`HTTP error! status: ${deleteResponse.status}`);
+          showAlert('Tarea eliminada correctamente.', 'success');
           await loadTasks();
         } catch (error) {
           console.error('Error al eliminar la tarea:', error);
-          alert('Hubo un error al eliminar la tarea. Por favor, intenta de nuevo.');
+          showAlert('Hubo un error al eliminar la tarea. Por favor, intenta de nuevo.', 'error');
         } finally {
           toggleLoading(false);
           disableButtons(false);
@@ -443,7 +540,7 @@
           // Resetear imagen y mensaje de error
           detailImage.style.display = 'none';
           detailImage.src = '';
-          imageError.style.display = 'none';
+          imageErrorDetail.style.display = 'none';
 
           // Mostrar la imagen si existe
           if (task.imagen_url) {
@@ -452,7 +549,7 @@
               detailImage.style.display = 'block';
             };
             detailImage.onerror = () => {
-              imageError.style.display = 'block';
+              imageErrorDetail.style.display = 'block';
               console.error('Error al cargar la imagen:', task.imagen_url);
             };
           }
@@ -463,6 +560,7 @@
 
       // Subir imagen a ImgBB y obtener la URL
       const uploadImage = async (imageFile) => {
+        if (!imageFile) return '';
         const formData = new FormData();
         formData.append('image', imageFile);
 
@@ -477,13 +575,15 @@
           const data = await response.json();
 
           if (data.success) {
+            // Optimizar la imagen mediante la obtención de una versión más pequeña si es posible
+            // Nota: ImgBB puede ofrecer diferentes tamaños de imágenes en la respuesta
             return data.data.url; // URL directa de la imagen
           } else {
             throw new Error('Error en la respuesta de ImgBB');
           }
         } catch (error) {
           console.error('Error al subir la imagen:', error);
-          alert('Hubo un error al subir la imagen. Por favor, intenta de nuevo.');
+          showAlert('Hubo un error al subir la imagen. Por favor, intenta de nuevo.', 'error');
           return '';
         }
       };
@@ -511,8 +611,21 @@
           const imagenFile = document.getElementById('imagenFile').files[0];
 
           if (!tareaValue || !fechaFinValue) {
-            alert('Por favor, completa todos los campos requeridos.');
+            showAlert('Por favor, completa todos los campos requeridos.', 'error');
             return;
+          }
+
+          // Validación de imagen (opcional)
+          if (imagenFile) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(imagenFile.type)) {
+              showAlert('Solo se permiten imágenes JPG, PNG o GIF.', 'error');
+              return;
+            }
+            if (imagenFile.size > 5 * 1024 * 1024) { // 5MB
+              showAlert('La imagen excede el tamaño máximo permitido de 5MB.', 'error');
+              return;
+            }
           }
 
           // Subir la imagen si se seleccionó una
@@ -525,14 +638,11 @@
             }
           }
 
-          // Obtener el último ID y asignar uno nuevo
-          const response = await fetch(endpoint);
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          const data = await response.json();
-          const maxId = data.length ? Math.max(...data.map(t => parseInt(t.id))) + 1 : 1;
+          // Generar un nuevo ID único
+          const newId = tasks.length ? Math.max(...tasks.map(t => parseInt(t.id))) + 1 : 1;
 
           const newTask = {
-            id: maxId.toString(),
+            id: newId.toString(),
             tarea: tareaValue,
             fecha_fin: fechaFinValue,
             imagen_url: imagenUrl,
@@ -547,12 +657,13 @@
 
           if (!postResponse.ok) throw new Error(`HTTP error! status: ${postResponse.status}`);
 
+          showAlert('Tarea agregada correctamente.', 'success');
           taskForm.reset();
           toggleModal(modal, false);
           await loadTasks();
         } catch (error) {
           console.error('Error al agregar la tarea:', error);
-          alert('Hubo un error al agregar la tarea. Por favor, intenta de nuevo.');
+          showAlert('Hubo un error al agregar la tarea. Por favor, intenta de nuevo.', 'error');
         } finally {
           toggleLoading(false);
           disableButtons(false);
@@ -565,7 +676,7 @@
         if (!li) return; // Salir si no se hizo clic dentro de un li
         const taskId = li.getAttribute('data-id');
 
-        if (e.target.classList.contains('delete-btn')) {
+        if (e.target.classList.contains('delete-btn') || e.target.parentElement.classList.contains('delete-btn')) {
           await deleteTask(taskId);
         } else {
           showTaskDetails(taskId);

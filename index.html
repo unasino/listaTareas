@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestión de Tareas </title>
+  <title>Gestión de Tareas</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
@@ -14,62 +14,54 @@
 <body>
   <div class="container">
     <h1><i class="fas fa-tasks"></i> Gestión de Tareas</h1>
-    <button class="btn btn-primary" id="open-modal-btn" aria-haspopup="dialog"><i class="fas fa-plus"></i> Agregar Tarea</button>
-    
+    <button class="btn btn-primary" id="open-modal-btn" aria-haspopup="dialog">
+      <i class="fas fa-plus"></i> Agregar Tarea
+    </button>
+
     <!-- Loading Spinner -->
     <div class="loading" id="loading" aria-live="polite">
-      <div class="spinner" aria-hidden="true"></div>
+      <div class="spinner"></div>
     </div>
 
-    <!-- Alert Container -->
+    <!-- Contenedor de Alertas -->
     <div id="alert-container"></div>
 
-    <!-- Lista de tareas -->
-    <ul id="task-list"></ul>
+    <!-- Lista de Tareas -->
+    <ul id="task-list" class="task-list"></ul>
   </div>
 
-  <!-- Modal para agregar tareas -->
-  <div id="taskModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="addTaskTitle">
+  <!-- Modal para Agregar Tareas -->
+  <div id="taskModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="close-modal-btn" aria-label="Cerrar">&times;</span>
-      <h2 id="addTaskTitle"><i class="fas fa-plus-circle"></i> Agregar Nueva Tarea</h2>
+      <button class="close" id="close-modal-btn" aria-label="Cerrar">&times;</button>
+      <h2><i class="fas fa-plus-circle"></i> Agregar Nueva Tarea</h2>
       <form id="task-form">
-        <input type="text" id="tarea" name="tarea" placeholder="Título de la tarea" required aria-required="true">
-        <input type="datetime-local" id="fechaFin" name="fechaFin" required aria-required="true">
-        
-        <!-- Nueva área de texto para la descripción -->
-        <textarea id="descripcion" name="descripcion" placeholder="Descripción de la tarea (opcional)" rows="4"></textarea>
-        
+        <input type="text" id="tarea" placeholder="Título de la tarea" required>
+        <input type="datetime-local" id="fechaFin" required>
+        <textarea id="descripcion" placeholder="Descripción de la tarea (opcional)" rows="4"></textarea>
         <!-- Campo para subir imagen -->
         <label for="imagenFile" class="btn btn-primary"><i class="fas fa-image"></i> Subir Imagen</label>
         <input type="file" id="imagenFile" name="imagenFile" accept="image/*" aria-label="Subir imagen" style="display: none;">
-        <p id="image-error">No se pudo cargar la imagen.</p>
-        <button type="submit"><i class="fas fa-check"></i> Agregar Tarea</button>
+        
+        <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Guardar Tarea</button>
       </form>
-      
     </div>
   </div>
 
-  <!-- Modal para mostrar detalles de tareas -->
-  <!-- Modal para mostrar detalles de tareas -->
-  <div id="taskDetailModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="detailTitle">
+  <!-- Modal para Detalles de Tareas -->
+  <div id="taskDetailModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="close-detail-modal-btn" aria-label="Cerrar">&times;</span>
+      <button class="close" id="close-detail-modal-btn" aria-label="Cerrar">&times;</button>
       <h2 id="detail-title"></h2>
       <p id="detail-date"></p>
       <p id="detail-status"></p>
-      
-      <!-- Nueva sección para mostrar la descripción -->
-      <p id="detail-description"></p>
-      
-      <!-- Imagen de la tarea -->
-      <img id="detail-image" src="" alt="Imagen de la tarea">
-      <p id="image-error-detail">No se pudo cargar la imagen.</p>
+      <div id="detail-description" class="description"></div>
+      <img id="detail-image" src="" alt="Imagen de la tarea" class="task-image">
+      <p id="image-error-detail" class="error-text">No se pudo cargar la imagen.</p>
     </div>
   </div>
-  
 
-  <!-- Enlace al archivo JavaScript externo -->
+  <!-- JavaScript Externo -->
   <script src="scripts.js"></script>
 </body>
 </html>

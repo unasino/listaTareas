@@ -124,16 +124,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const showTaskDetails = (taskId) => {
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
-
+  
     detailTitle.textContent = task.tarea;
     detailDate.textContent = `Fecha de vencimiento: ${new Date(task.fecha_fin).toLocaleString()}`;
     detailStatus.textContent = `Estado: ${calcularDiasRestantes(task.fecha_fin) < 0 ? 'Vencida' : 'Pendiente'}`;
-    detailDescription.innerHTML = formatDescription(task.descripcion || 'No hay descripción disponible.');
+  
+    // Añadir un contenedor para la descripción con un delimitador
+    detailDescription.innerHTML = `
+      <div class="description-container">
+        <h3>Descripción</h3>
+        <div class="description-content">
+          ${formatDescription(task.descripcion || 'No hay descripción disponible.')}
+        </div>
+      </div>
+    `;
+  
     detailImage.src = task.imagen_url || '';
     detailImage.style.display = task.imagen_url ? 'block' : 'none';
-
+  
     toggleModal(detailModal, true);
   };
+  
 
   const uploadImage = async (imageFile) => {
     if (!imageFile) return '';

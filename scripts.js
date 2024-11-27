@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const endpoint = 'https://sheetdb.io/api/v1/yggxt7by6e4dv';
+  const endpoint = 'https://sheetdb.io/api/v1/emyid6y0ogjp4';
   const imgbbApiKey = '372dd6dc556299357a3f928d1c8b053f';
 
   const taskForm = document.getElementById('task-form');
